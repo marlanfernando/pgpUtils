@@ -73,8 +73,7 @@ public class PgpPainlessUtil {
      * Encrypt provided input stream and return Output stream of the encrypted data
      * @param inputStream : plain file/text
      * @param privateKey : private key (our key)
-     * @param publicKey : public key of the reciever
-     * @return outputStream : stream of encrypted data
+     * @param publicKey : public key of the receiver
      * @throws PgpUtilException
      */
     public static void encryptFile(InputStream inputStream, OutputStream outputStream,  byte[] privateKey, byte[] publicKey)
@@ -98,6 +97,14 @@ public class PgpPainlessUtil {
         encrypt(options, inputStream, outputStream);
     }
 
+    /**
+     * Decrypt encrypted file with given keys
+     * @param inputStream : Input Stream of the encrypted file
+     * @param outputStream : Output Stream for the decrypted file
+     * @param privateKey : private key (our key)
+     * @param publicKey : public key of the sender
+     * @throws PgpUtilException
+     */
     public static void decryptFile (InputStream inputStream, OutputStream outputStream,
                                             byte[] privateKey, byte[] publicKey) throws PgpUtilException {
 
@@ -136,23 +143,14 @@ public class PgpPainlessUtil {
     private static void encrypt(ProducerOptions options, InputStream inputStream, OutputStream outputStream)
             throws PgpUtilException {
 
-        EncryptionStream encryptionStream = null;
-        try {
-            encryptionStream = PGPainless.encryptAndOrSign()
-                    .onOutputStream(outputStream)
-                    .withOptions(options);
+        try (EncryptionStream encryptionStream = PGPainless.encryptAndOrSign()
+                .onOutputStream(outputStream)
+                .withOptions(options)) {
 
             Streams.pipeAll(inputStream, encryptionStream);
 
         } catch (PGPException | IOException e) {
             throw new PgpUtilException(e.getMessage() + "In encrypting the message");
-        } finally {
-            try {
-                if (encryptionStream != null)
-                    encryptionStream.close();
-            } catch (IOException e) {
-                // failed to close the stream
-            }
         }
     }
 
