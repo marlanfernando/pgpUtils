@@ -31,18 +31,18 @@ public class PgpPainlessUtil {
     /**
      * Encrypt the given string with the provided public and private key
      * @param plainText : message to be encrypted
-     * @param privateKey : private key of the sender
-     * @param publicKey : public key of the receiver
+     * @param ourKey : private key of the sender
+     * @param receiversKey : public key of the receiver
      * @return String : cypher text of the message
      * @throws PgpUtilException : For any exception will throw this with sufficient message detail
      */
-    public static String encryptString( String plainText, byte[] privateKey, byte[] publicKey) throws  PgpUtilException{
+    public static String encryptString( String plainText, byte[] ourKey, byte[] receiversKey) throws  PgpUtilException{
 
         if (plainText == null || plainText.isEmpty()) throw new PgpUtilException("Message should be present to encrypt");
         InputStream inputStream = new ByteArrayInputStream(plainText.getBytes());
         OutputStream outputStream = new ByteArrayOutputStream();
 
-        encryptFile(inputStream,outputStream, privateKey, publicKey);
+        encryptFile(inputStream,outputStream, ourKey, receiversKey);
 
         return outputStream.toString();
     }
@@ -51,19 +51,19 @@ public class PgpPainlessUtil {
     /**
      * Decrypt the string provided
      * @param cypherTextMessage : cypher text message
-     * @param privateKey : private key
-     * @param publicKey : public key of the sender
+     * @param ourKey : private key
+     * @param sendersPublicKey : public key of the sender
      * @return String :plain text
      * @throws PgpUtilException
      */
-    public static String decryptstring (String cypherTextMessage, byte[] privateKey, byte[] publicKey) throws PgpUtilException {
+    public static String decryptstring (String cypherTextMessage, byte[] ourKey, byte[] sendersPublicKey) throws PgpUtilException {
 
         if (cypherTextMessage == null || cypherTextMessage.isEmpty()) throw new PgpUtilException("Message should be present to encrypt");
 
         InputStream inputStream = new ByteArrayInputStream(cypherTextMessage.getBytes());
         OutputStream outputStream = new ByteArrayOutputStream();
 
-        decryptFile(inputStream,outputStream, privateKey, publicKey);
+        decryptFile(inputStream,outputStream, ourKey, sendersPublicKey);
 
         return outputStream.toString();
 
@@ -72,16 +72,17 @@ public class PgpPainlessUtil {
     /**
      * Encrypt provided input stream and return Output stream of the encrypted data
      * @param inputStream : plain file/text
-     * @param privateKey : private key (our key)
-     * @param publicKey : public key of the receiver
+     * @param ourKey : private key (our key)
+     * @param receiversPublicKey : public key of the receiver
      * @throws PgpUtilException
      */
-    public static void encryptFile(InputStream inputStream, OutputStream outputStream,  byte[] privateKey, byte[] publicKey)
+    public static void encryptFile(InputStream inputStream, OutputStream outputStream,
+                                   byte[] ourKey, byte[] receiversPublicKey)
             throws PgpUtilException {
 
         if (inputStream == null) throw new PgpUtilException("Input file is null");
 
-        Keys keys = getKeys(privateKey, publicKey);
+        Keys keys = getKeys(ourKey, receiversPublicKey);
 
         EncryptionOptions encryptionOptions = EncryptionOptions.get().addRecipient(keys.receiverKey);
         ProducerOptions options = null;
@@ -101,16 +102,16 @@ public class PgpPainlessUtil {
      * Decrypt encrypted file with given keys
      * @param inputStream : Input Stream of the encrypted file
      * @param outputStream : Output Stream for the decrypted file
-     * @param privateKey : private key (our key)
-     * @param publicKey : public key of the sender
+     * @param ourKey : private key (our key)
+     * @param sendersPublicKey : public key of the sender
      * @throws PgpUtilException
      */
     public static void decryptFile (InputStream inputStream, OutputStream outputStream,
-                                            byte[] privateKey, byte[] publicKey) throws PgpUtilException {
+                                            byte[] ourKey, byte[] sendersPublicKey) throws PgpUtilException {
 
         if (inputStream == null) throw new PgpUtilException("Encrypt file not provided");
 
-        Keys keys = getKeys(privateKey, publicKey);
+        Keys keys = getKeys(ourKey, sendersPublicKey);
 
         ConsumerOptions options = ConsumerOptions.get()
                 .addVerificationCert(keys.receiverKey) // add a verification cert for signature verification
