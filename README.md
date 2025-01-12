@@ -1,5 +1,7 @@
 # PgpPainlessUtil
 
+*Update* -> This implementation now contains both SOP and Core implementation.
+
 This utility class is a wrapper for PGPainless implementation. In this utility class I cover the bellow usecases
 
 <ul>

@@ -12,8 +12,17 @@
     <dependency>
       <groupId>org.pgpainless</groupId>
       <artifactId>pgpainless-core</artifactId>
-      <version>1.6.6</version>
+      <version>1.7.2</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.pgpainless/pgpainless-sop -->
+    <dependency>
+      <groupId>org.pgpainless</groupId>
+      <artifactId>pgpainless-sop</artifactId>
+      <version>1.7.2</version>
+      <scope>runtime</scope>
+    </dependency>
+
 
   </dependencies>
 

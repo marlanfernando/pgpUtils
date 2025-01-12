@@ -1,21 +1,17 @@
-import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.pgpainless.PGPainless;
 import org.pgpainless.key.generation.type.rsa.RsaLength;
 
-import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
 
 public class CreateKeys {
 
     public static void main(String[] args) {
         try {
             PGPSecretKeyRing ourKey = PGPainless.generateKeyRing()
-                    .simpleRsaKeyRing("Marlan <marlanfernando@outlook.com>", RsaLength._4096);
+                    .simpleRsaKeyRing("Marlan <test@outlook.com>", RsaLength._4096);
 
             PGPSecretKeyRing receiverKey = PGPainless.generateKeyRing().simpleRsaKeyRing("gio", RsaLength._4096);
 

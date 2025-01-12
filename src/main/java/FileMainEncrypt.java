@@ -1,6 +1,5 @@
 import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.pgpainless.PGPainless;
-import org.pgpainless.key.generation.type.rsa.RsaLength;
 import util.PgpPainlessUtil;
 
 import java.io.InputStream;
